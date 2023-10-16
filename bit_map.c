@@ -19,7 +19,7 @@ void BitMap_setBit(BitMap* bit_map, int bit_num, int status){   //setto un bit s
                                                                 //e poi lo setto in base allo status in unput
 
   int byte_num=bit_num>>3;  //come se dividessi per 2^3, cioè 8, per ottenere il numero di byte
-  assert(byte_num<bit_map->buffer_size);
+  assert(byte_num<bit_map->buffer_size);    //controllo che il byte sia minore del numero di byte della bitmap
   int bit_in_byte=byte_num&0x03;    //AND bit a bit per ottenere il bit in questione
   if (status) {                    //se lo status è 1 allora setto il bit
     bit_map->buffer[byte_num] |= (1<<bit_in_byte);
@@ -31,7 +31,7 @@ void BitMap_setBit(BitMap* bit_map, int bit_num, int status){   //setto un bit s
 // inspects the status of the bit bit_num
 int BitMap_bit(const BitMap* bit_map, int bit_num){
   int byte_num=bit_num>>3; //trovo numero del byte
-  assert(byte_num<bit_map->buffer_size);
+  assert(byte_num<bit_map->buffer_size);    //controllo che il byte sia minore del numero di byte della bitmap
   int bit_in_byte=byte_num&0x03;    //AND bit a bit per ottenere il bit in questione
   return (bit_map->buffer[byte_num] & (1<<bit_in_byte))!=0; //ritorno il bit in questione(1 acceso, 0 spento)
 }
