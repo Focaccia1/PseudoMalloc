@@ -27,15 +27,15 @@ int get_buddy(index){  //per trovare index del buddy di un blocco dato(index inp
         return index - 1; //altrimenti è dispari -> buddy è index +1
 }
 
-get_left_child(int index){
+int get_left_child(int index){
     return (int) (2*index + 1); //calcolo figlio sinistro
 }
 
-get_right_child(int index){
+int get_right_child(int index){
     return (int) (2*index + 2); //calcolo figlio destro
 }
 
-get_first_buddy(int level){
+int get_first_buddy(int level){
     return (int) (1 << level) - 1; //calcolo primo buddy (bitwise -> 2^index)
 }
 
