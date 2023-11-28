@@ -1,8 +1,9 @@
 # PseudoMalloc
 Operating Sistem pseudo-malloc implementation.
 This is a malloc replacement.
-   The system relies on mmap for the physical allocation of memory, but handles the requests in
-   2 ways:
+
+The system relies on mmap for the physical allocation of memory, but handles the requests in
+2 ways:
    - for small requests (< 1/4 of the page size) it uses a buddy allocator.
      Clearly, such a buddy allocator can manage at most page-size bytes
      For simplicity use a single buddy allocator, implemented with a bitmap
