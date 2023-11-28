@@ -51,3 +51,24 @@ void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer, BitM
   buddy_allocator->bitmap = bitmap;  //ptr bitmap (vd. bitmap.h)
   buddy_allocator->lvl = lvl;
 }
+
+int search_available_block(BitMap* bitmap, int lvl){  //cerca blocco libero al livello "lvl"
+  printf("cerco blocco libero al livello %d\n",lvl);
+  int start_index = first_index_from_level(level);
+  int end_index = first_index_from_level(level + 1);
+  printf("\t indice di partenza %d\n",start_index);
+  printf("\t indice finale &d\n",end_index);
+
+  // devo cercare un blocco disponibile, itero finchè non lo trovo
+  int i = start_index;
+  while (i <=  end_index){
+    printf("posizione: %d\n", i);
+    printf("bit del bitmap spento/acceso(0/1): %d\n", Bit_Map_bit(bitmap, i) );
+    if (Bit_Map_bit(bitmap, i) != 0){
+      printf("blocco libero trovato in pos = %d\n", i);
+      return i;
+    }
+    i++;
+  }
+  return -1;  //se non trovo blocchi disponibili ritorno -1
+}
