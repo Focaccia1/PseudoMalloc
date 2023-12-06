@@ -45,14 +45,32 @@ void check_index(buddy_allocator_t * buddy_allocator, int index){  //controlla s
   }
 }
 
-void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer, BitMap *bitmap, int lvl, int min){    //inizializza allocator
+void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer, BitMap *bitmap, int lvl, int min, uint8_t *buffer_dim){    //inizializza allocator
   buddy_allocator->min_block_size = min;  //dim minima del blocco
   buddy_allocator->memory = buffer;  //ptr memoria allocata
-  buddy_allocator->bitmap = bitmap;  //ptr bitmap (vd. bitmap.h)
+  //buddy_allocator->bitmap = bitmap;  //ptr bitmap (vd. bitmap.h)
   buddy_allocator->lvl = lvl;
+
+  //inizializzo la bitmap per inizializzare il buddy allocator
+  int bits = (1 << lvl) - 1;  //calcolo numero di bit necessari per rappresentare l'albero (2^lvl - 1, -1 perchè l'albero parte da 0)
+  bitmap_init(buddy_allocator->bitmap, bits, buffer_dim);  //inizializzo bitmap
+
+  //ora setto la radice(bit bitmap) a 1 se disponibile, 0 altrimenti
+  BitMap_setBit(buddy_allocator->bitmap,0, 1);
+
+  printf("inizializzazione completata\n");
+  printf("numero livelli: %d\n", buddy_allocator->lvl);
+  printf("dimensione minima allocabile: %d\n", buddy_allocator->min_block_size);
+  printf("totale memoria gestibile: %d\n", ((1 << lvl) - 1) * buddy_allocator->min_block_size);
 }
 
+
+
 int search_available_block(BitMap* bitmap, int lvl){  //cerca blocco libero al livello "lvl"
+  if (lvl < 0){
+    perror("error: invalid level");
+    return -1;
+  }
   printf("cerco blocco libero al livello %d\n",lvl);
   int start_index = first_index_from_level(lvl);
   int end_index = first_index_from_level(lvl + 1);
