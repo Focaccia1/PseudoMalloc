@@ -54,8 +54,8 @@ void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer, BitM
 
 int search_available_block(BitMap* bitmap, int lvl){  //cerca blocco libero al livello "lvl"
   printf("cerco blocco libero al livello %d\n",lvl);
-  int start_index = first_index_from_level(level);
-  int end_index = first_index_from_level(level + 1);
+  int start_index = first_index_from_level(lvl);
+  int end_index = first_index_from_level(lvl + 1);
   printf("\t indice di partenza %d\n",start_index);
   printf("\t indice finale &d\n",end_index);
 
