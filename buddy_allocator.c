@@ -45,7 +45,7 @@ void check_index(buddy_allocator_t * buddy_allocator, int index){  //check if in
   }
 }
 
-void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer, BitMap *bitmap, int lvl, int min, uint8_t *buffer_dim){    //initialize allocator
+void buddy_allocator_init(buddy_allocator_t *buddy_allocator, char *buffer, int lvl, int min, uint8_t *buffer_dim){    //initialize allocator
   buddy_allocator->min_block_size = min;  //min dim
   buddy_allocator->memory = buffer;  //ptr to allocated mem
   //buddy_allocator->bitmap = bitmap;  //ptr bitmap (vd. bitmap.h)
