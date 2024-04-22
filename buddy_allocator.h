@@ -24,6 +24,26 @@ int get_first_buddy(int index);//calcolo primo buddy
 
 void check_index(buddy_allocator_t * buddy_allocator ,int index);    //controlla se index è nei limiti del buddy [0, 2^(buddy->lvl)]
 
-void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer, BitMap *bitmap, int lvl, int min, uint8_t *buffer_dim);    //inizializza allocator
+void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer, int lvl, int min, uint8_t *buffer_dim);    //inizializza allocator
 
 int search_available_block(BitMap* bitmap, int lvl);     //cerca blocco libero al livello "lvl"
+
+int search_available_level(buddy_allocator_t * buddy_allocator, int dim); //check for the fittest available level
+
+int get_available_buddy_index(buddy_allocator_t *buddy_allocator, int lvl); //recursive function to find a free index
+
+void *get_buddy_allocator_address(buddy_allocator_t* buddy_allocator, int lvl, int index); //get the address of the buddy allocator
+
+void *buddy_allocator_pseudo_malloc(buddy_allocator_t *buddy_allocator, int dim); //pseudo malloc function
+
+void free_buddy(buddy_allocator_t* buddy_allocator, int index);   //free blocks
+
+void free_buddy_pointer(buddy_allocator_t* buddy_allocator, void* mem); //free pointer
+
+
+
+
+
+
+
+

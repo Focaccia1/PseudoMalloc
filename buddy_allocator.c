@@ -144,7 +144,7 @@ void *get_buddy_allocator_address(buddy_allocator_t* buddy_allocator, int lvl, i
   return (void *)buddy_allocator->memory + shift;
 }
 
-buddy_allocator_pseudo_malloc(buddy_allocator_t *buddy_allocator, int dim){
+void *buddy_allocator_pseudo_malloc(buddy_allocator_t *buddy_allocator, int dim){
 
   int level = search_available_level(buddy_allocator, dim + sizeof(int));  //search for the fittest available level for page with dim bytes
   if(level == -1){
@@ -192,7 +192,7 @@ void free_buddy(buddy_allocator_t* buddy_allocator, int index){   //free blocks
   }
 }
 
-free_buddy_pointer(buddy_allocator_t* buddy_allocator, void* mem){
+void free_buddy_pointer(buddy_allocator_t* buddy_allocator, void* mem){
   int index = *((int *) mem - 1);  //get the index of the block
   check_index(buddy_allocator, index);  //check index
   free_buddy(buddy_allocator, index);  //free
