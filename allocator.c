@@ -1,4 +1,4 @@
-#define _GNU_SOURCE     //was having problems with "MAP_ANONYMOUS" declaration so i defined a different standard. -std=c99 does not support MAP_ANONYMOUS definition, soo i used gnu99 
+#define _GNU_SOURCE     //was having problems with "MAP_ANONYMOUS" declaration so i defined a different standard. -std=c99 does not support MAP_ANONYMOUS definition, soo i used gnu99
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
