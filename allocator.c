@@ -26,13 +26,24 @@ void* my_malloc(size_t size){
         return NULL;
     }
 
-    size += 4; 
-    //now i check if i can use the buddy allocator, the size must be not greater than 1/4 of the page size
+    size += 4; //some extra space
+    //now i check if i have to use buddy or mmap: size <= (1/4)page_size -> buddy | size > (1/4)page_size -> mmap
     if (size <= PAGE_SIZE / 4){
         return buddy_allocator_pseudo_malloc(&buddy_allocator, size);
     }
 
-    //if the size is greater than 1/4 of the page size, i use mmap
+    //if the size is greater than 1/4 of the page size, i use mmap whith these chosen FLAGS:
+    /*
+    PROT_READ: This specifies that the memory region should be readable. So processes can read from this memory.
+
+    PROT_WRITE: This specifies that the memory region should be writable. So processes can write to this memory.
+
+    MAP_PRIVATE: This pecifies that modifications to the mapped region are private to the mapping process.
+    So changes are not visible to other processes mapping the same file, and are not written back to the underlying file.
+
+    MAP_ANONYMOUS: This specifies that the mapping is not backed by any file. So basically the kernel should create an anonymous memory mapping,
+    which is not associated with any file on disk. Perfect for our purpose of allocating memory.
+    */
     else{
         void *pointer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         if (pointer == MAP_FAILED){
@@ -44,16 +55,16 @@ void* my_malloc(size_t size){
 }
 
 void my_free(void *pointer, size_t size){
-    if (pointer == NULL || size <= 0){
+    if (pointer == NULL || size <= 0){      //if the pointer is NULL or the size is less than 0, so invalid input, we return
         printf("invalid stuff in my_free input\n");
         return;
     }
     size += 4;
-    // as before if the size is less than 1/4 of the page size, i use buddy_allocator
+    // as before, if the size is less than 1/4 of the page size, i now use my buddy_allocator functions
     if (size <= PAGE_SIZE / 4){
-        free_buddy_pointer(&buddy_allocator, pointer);
+        free_buddy_pointer(&buddy_allocator, pointer);  
     }
-    //else we use the unmap
+    //if the dim is >= 1/4, we use the unmap
     else{
         if (munmap(pointer, size) == -1){
             perror("munmap failed");
