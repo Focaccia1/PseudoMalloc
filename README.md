@@ -1,5 +1,5 @@
 # PseudoMalloc
-Project for the "Operating System" exam, BSc in computer and control engineering at Sapienza University of Rome,  pseudo-malloc implementation.
+Project for the [Operating System](https://sites.google.com/diag.uniroma1.it/sistemi-operativi-2022-23) exam, BSc in computer and control engineering at Sapienza University of Rome,  pseudo-malloc implementation.
 This is a malloc replacement.
 
 The system relies on mmap for the physical allocation of memory, but handles the requests in
