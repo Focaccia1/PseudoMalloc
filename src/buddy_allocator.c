@@ -139,14 +139,14 @@ int get_available_buddy_index(buddy_allocator_t *buddy_allocator, int lvl){ //re
 }
 
 void *get_buddy_allocator_address(buddy_allocator_t* buddy_allocator, int lvl, int index){
-  int level_index = index - ((1 << lvl) -1);
-  int shift = level_index * (buddy_allocator->min_block_size * 1 << (buddy_allocator->lvl - lvl -1)); //offset calculation
+  int level_index = index - ((1 << lvl) -1);  //from level to index
+  int shift = level_index * (buddy_allocator->min_block_size * (1 << (buddy_allocator->lvl - lvl -1))); //dim of a block at a certain lvl + offset calculation (shift)
   return (void *)buddy_allocator->memory + shift;
 }
 
 void *buddy_allocator_pseudo_malloc(buddy_allocator_t *buddy_allocator, int dim){
 
-  int level = search_available_level(buddy_allocator, dim + sizeof(int));  //search for the fittest available level for page with dim bytes
+  int level = search_available_level(buddy_allocator, dim + sizeof(int));  //search for the fittest available level, I sum sizeof(int) cause I have to add the header size (4 bytes)
   if(level == -1){
     printf("didn't find a big enough block\n");
     perror("error buddy_allocator_alloc: no memory available");
@@ -161,7 +161,7 @@ void *buddy_allocator_pseudo_malloc(buddy_allocator_t *buddy_allocator, int dim)
 
   //if i get here i found a block, i have to allocate it
   int *address = (int *)get_buddy_allocator_address(buddy_allocator, level, index);  //get the address of the block
-  *address = level;  //now save it
+  *address = index;  //now save the index of the block i've located so i can free it later
 
   return (void *)(address + 1);  //return the address of the block
 }

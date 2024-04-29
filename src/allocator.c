@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <sys/mman.h>
+#include <errno.h>
 #include <string.h>
 
 #include "buddy_allocator.h"
@@ -26,10 +27,15 @@ void* my_malloc(size_t size){
         return NULL;
     }
 
-    size += 4; //i add the size to the size
+    size += 4; //I sum the header size (4 bytes)
     //now i check if i have to use buddy or mmap: size <= (1/4)page_size -> buddy | size > (1/4)page_size -> mmap
     if (size <= PAGE_SIZE / 4){
-        return buddy_allocator_pseudo_malloc(&buddy_allocator, size);
+        void *pointer = buddy_allocator_pseudo_malloc(&buddy_allocator, size);
+        if (pointer == NULL){
+            perror("buddy_allocator_pseudo_malloc failed\n");
+            return NULL;
+        }
+        return pointer;
     }
 
     //if the size is greater than 1/4 of the page size, i use mmap whith these chosen FLAGS:
@@ -47,6 +53,7 @@ void* my_malloc(size_t size){
     else{
         void *pointer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         if (pointer == MAP_FAILED){
+            errno = ENOMEM; //if the mmap fails, i set errno to ENOMEM -> not enough memory
             perror("mmap failed");
             return NULL;
         }
@@ -59,7 +66,7 @@ void my_free(void *pointer, size_t size){
         printf("invalid stuff in my_free input\n");
         return;
     }
-    size += 4;  //to free also the extra space added before
+    size += 4;  //to free also the header
     // as before, if the size is less than 1/4 of the page size, i now use my buddy_allocator functions
     if (size <= PAGE_SIZE / 4){
         free_buddy_pointer(&buddy_allocator, pointer);  
