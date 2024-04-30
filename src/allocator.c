@@ -35,6 +35,7 @@ void* my_malloc(size_t size){
             perror("buddy_allocator_pseudo_malloc failed\n");
             return NULL;
         }
+        printf("successfully allocated memory with buddy, size:%d\n", size);
         return pointer;
     }
 
@@ -57,6 +58,7 @@ void* my_malloc(size_t size){
             perror("mmap failed");
             return NULL;
         }
+        printf("successfully allocated memory with mmap, size:%d\n", size);
         return pointer;
     }
 }
