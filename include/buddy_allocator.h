@@ -22,9 +22,11 @@ int get_right_child(int index);//calcolo figlio dx
 
 int get_first_buddy(int index);//calcolo primo buddy
 
+int first_index_from_level(int level); //calcolo primo indice da livello
+
 void check_index(buddy_allocator_t * buddy_allocator ,int index);    //controlla se index è nei limiti del buddy [0, 2^(buddy->lvl)]
 
-void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer, int lvl, int min, uint8_t *buffer_dim);    //inizializza allocator
+void buddy_allocator_init(buddy_allocator_t *buddy_allocator, char *buffer, int lvl, int min, uint8_t *buffer_dim);    //initialize allocator
 
 int search_available_block(BitMap* bitmap, int lvl);     //cerca blocco libero al livello "lvl"
 

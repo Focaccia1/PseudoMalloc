@@ -6,10 +6,11 @@
 #include <sys/mman.h>
 #include <errno.h>
 #include <string.h>
+#include <math.h>
 
-#include "buddy_allocator.h"
-#include "bit_map.h"
-#include "allocator.h"
+#include "../include/allocator.h"
+#include "../include/buddy_allocator.h"
+#include "../include/bit_map.h"
 
 char memory[MAX_MEM_SIZE];
 uint8_t buffer[((1 << (BUDDY_LVLS)) - 1)];

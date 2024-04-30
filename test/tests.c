@@ -1,6 +1,6 @@
-#include "../src/allocator.h"
-#include "../src/buddy_allocator.h"
-#include "../src/bit_map.h"
+#include "../include/allocator.h"
+#include "../include/buddy_allocator.h"
+#include "../include/bit_map.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

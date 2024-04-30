@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
-#include "buddy_allocator.h"
-#include "bit_map.h"
 #include <string.h>
 #include <math.h>
+
+#include "../include/allocator.h"
+#include "../include/buddy_allocator.h"
+#include "../include/bit_map.h"
 
 int get_level(int index){   //i can calculate floor of log2 to find index, knowing that my tree is certainly complete
   return (int)floor(log2(index));
@@ -25,6 +27,10 @@ int get_buddy(index){  //to find an index of a block(index input)
         return index + 1; //ritorno buddy
     else
         return index - 1; //if is odd number -> buddy = index +1
+}
+
+int first_index_from_level(int level){
+  return (int)(1 << level) - 1; 
 }
 
 int get_left_child(int index){
@@ -53,7 +59,7 @@ void buddy_allocator_init(buddy_allocator_t *buddy_allocator, char *buffer, int 
 
   //inizializzo la bitmap per inizializzare il buddy allocator
   int bits = (1 << lvl) - 1;  //calculate necessary bits to represent the tree (2^lvl - 1, -1 cuz tree starts from 0)
-  bitmap_init(buddy_allocator->bitmap, bits, buffer_dim);  //initialize bitmap
+  BitMap_init(buddy_allocator->bitmap, bits, buffer_dim);  //initialize bitmap
 
   //now i set root(bit bitmap) at 1 if available, 0 otherwise
   BitMap_setBit(buddy_allocator->bitmap,0, 1);
@@ -81,8 +87,8 @@ int search_available_block(BitMap* bitmap, int lvl){  //search for a free block 
   int i = start_index;
   while (i <=  end_index){
     printf("posizione: %d\n", i);
-    printf("bit del bitmap spento/acceso(0/1): %d\n", Bit_Map_bit(bitmap, i) );
-    if (Bit_Map_bit(bitmap, i) != 0){
+    printf("bit del bitmap spento/acceso(0/1): %d\n", BitMap_bit(bitmap, i) );
+    if (BitMap_bit(bitmap, i) != 0){
       printf("blocco libero trovato in pos = %d\n", i);
       return i;
     }

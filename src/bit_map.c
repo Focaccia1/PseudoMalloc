@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+//#include "../include/allocator.h"
+//#include "../include/buddy_allocator.h"
+#include "../include/bit_map.h"
+
 int BitMap_getBytes(int bits){  //calcolo i byte necessari per memorizzare un numero x di bit(preso in input)
   return bits/8 + (bits%8)!=0;  //bits/8 mi da il numero di byte e poi controllo se serve aggiungere un altro byte extra epr bit avanzati
 }
