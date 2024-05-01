@@ -18,7 +18,8 @@
 #define DIVIDER ("---------------------------------------------------------------------------------------------------------------\n")
 
 int main(){
-    int buddy_tests, mmap_tests = 0;
+    printf("tests started\n");
+    int buddy_tests = 0, mmap_tests = 0;
     int max_buddy_tests = 4;
     int max_mmap_tests = 3;
     allocator_init();
@@ -34,7 +35,7 @@ int main(){
         printf("Test 1 failed\n");
         return -1;
     }
-    printf("Test 1 passed, %d bytes have been allocated\n", size);
+    printf("Test 1 passed, %ld bytes have been allocated\n", size);
     buddy_tests ++;
 
     printf(DIVIDER);
@@ -46,7 +47,7 @@ int main(){
         printf("Test 2 failed\n");
         return -1;
     }
-    printf("Test 2 passed, %d bytes have been allocated\n", size);
+    printf("Test 2 passed, %ld bytes have been allocated\n", size);
     buddy_tests ++;
 
     printf(DIVIDER);
@@ -58,7 +59,7 @@ int main(){
         printf("Test 3 failed\n");
         return -1;
     }
-    printf("Test 3 passed, %d bytes have been allocated\n", size);
+    printf("Test 3 passed, %ld bytes have been allocated\n", size);
     buddy_tests ++;
 
     printf(DIVIDER);
@@ -70,7 +71,7 @@ int main(){
         printf("Test 4 failed\n");
         return -1;
     }
-    printf("Test 4 passed, %d bytes have been allocated\n", size);
+    printf("Test 4 passed, %ld bytes have been allocated\n", size);
     buddy_tests ++;
 
     printf(DIVIDER);
@@ -93,7 +94,7 @@ int main(){
         printf("Test 1 failed\n");
         return -1;
     }
-    printf("Test 1 passed, %d bytes have been allocated\n", size);
+    printf("Test 1 passed, %ld bytes have been allocated\n", size);
     mmap_tests ++;
 
     printf(DIVIDER);
@@ -105,7 +106,7 @@ int main(){
         printf("Test 2 failed\n");
         return -1;
     }
-    printf("Test 2 passed, %d bytes have been allocated\n", size);
+    printf("Test 2 passed, %ld bytes have been allocated\n", size);
     mmap_tests ++;
 
     printf(DIVIDER);
@@ -117,7 +118,7 @@ int main(){
         printf("Test 3 failed\n");
         return -1;
     }
-    printf("Test 3 passed, %d bytes have been allocated\n", size);
+    printf("Test 3 passed, %ld bytes have been allocated\n", size);
     mmap_tests ++;
 
     printf(DIVIDER);
@@ -139,5 +140,93 @@ int main(){
     printf("Tests failed : %d\n", total_max_tests - total_tests);
 
 
-
 }
+
+
+/*
+#include "../include/allocator.h"
+#include "../include/buddy_allocator.h"
+#include "../include/bit_map.h"
+#include <stdio.h>
+
+#define SEPARATOR "----------------------------------------\n"
+
+void test_my_malloc()
+{
+    void *ptr;
+    for (int size = 1; size <= MAX_MEM_SIZE * 5; size <<= 1)
+    {
+        printf("Testing my_malloc() with size: %d\n", size);
+        ptr = my_malloc(size);
+        printf("Allocated ptr: %p\n", ptr);
+        printf("Testing my_free() with ptr: %p\n", ptr);
+        my_free(ptr, size);
+        printf("Freed ptr: %p\n", ptr);
+        printf(SEPARATOR);
+    }
+}
+
+void test_my_malloc_mmap()
+{
+    int NUM_TESTS = 10;
+    int SIZE = 1 << 30;
+    void *ptr[NUM_TESTS];
+
+    printf("Testing my_malloc() with %d pointers of fixed size: %d\n", NUM_TESTS, SIZE);
+    printf("All pointers should be allocated from mmap()\n");
+    for (int i = 0; i < NUM_TESTS; i++)
+    {
+        ptr[i] = my_malloc(SIZE);
+        printf("Allocated ptr %d : %p\n", i, ptr[i]);
+    }
+    printf(SEPARATOR);
+
+    printf("Freeing pointers\n");
+    for (int i = 0; i < NUM_TESTS; i++)
+    {
+        printf("Freeing ptr %d : %p\n", i, ptr[i]);
+        my_free(ptr[i],SIZE);
+    }
+    printf(SEPARATOR);
+}
+
+void test_my_malloc_buddy_allocator()
+{
+    int NUM_TESTS = 10;
+    int SIZE = PAGE_SIZE / 4 - 1;
+    void *ptr[NUM_TESTS];
+
+    printf("Testing my_malloc() with %d pointers of fixed size: %d\n", NUM_TESTS, SIZE);
+    printf("All pointers should be allocated from BuddyAllocator\n");
+    for (int i = 0; i < NUM_TESTS; i++)
+    {
+        ptr[i] = my_malloc(SIZE);
+        printf("Allocated ptr %d : %p\n", i, ptr[i]);
+    }
+    printf(SEPARATOR);
+
+    printf("Freeing pointers\n");
+    for (int i = 0; i < NUM_TESTS; i++)
+    {
+        printf("Freeing ptr %d : %p\n", i, ptr[i]);
+        my_free(ptr[i],SIZE);
+    }
+    printf(SEPARATOR);
+}
+int main()
+{
+    printf(SEPARATOR);
+    printf("Testing my_malloc.c\n");
+    printf("Page size: %d\n", PAGE_SIZE);
+    printf("Requests with size < %d will be handled by BuddyAllocator\n", PAGE_SIZE / 4);
+    printf("Requests with size >= %d will be handled by mmap()\n", PAGE_SIZE / 4);
+    printf(SEPARATOR);
+    allocator_init();
+
+    test_my_malloc();
+    test_my_malloc_mmap();
+    test_my_malloc_buddy_allocator();
+
+    return 0;
+}
+*/

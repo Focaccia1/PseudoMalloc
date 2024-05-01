@@ -19,7 +19,9 @@ buddy_allocator_t buddy_allocator;
 BitMap bitmap;
 
 void allocator_init(){
-    buddy_allocator_init(&buddy_allocator, memory, BUDDY_LVLS, MIN_SIZE, buffer);   //the bitmap is initialized in buddy_allocator_init
+    BitMap_init(&bitmap, N_BUDDIES, buffer);  //initialize the bitmap
+    BitMap_setBit(&bitmap, 0, 1);  //set the first bit to 1 (free)
+    buddy_allocator_init(&buddy_allocator, &bitmap, memory, BUDDY_LVLS, MIN_SIZE);   //the bitmap is initialized in buddy_allocator_init
 }
 
 void* my_malloc(size_t size){
@@ -36,7 +38,7 @@ void* my_malloc(size_t size){
             perror("buddy_allocator_pseudo_malloc failed\n");
             return NULL;
         }
-        printf("successfully allocated memory with buddy, size:%d\n", size);
+        printf("successfully allocated memory with buddy, size:%ld\n", size);
         return pointer;
     }
 
@@ -59,7 +61,7 @@ void* my_malloc(size_t size){
             perror("mmap failed");
             return NULL;
         }
-        printf("successfully allocated memory with mmap, size:%d\n", size);
+        printf("successfully allocated memory with mmap, size:%ld\n", size);
         return pointer;
     }
 }
