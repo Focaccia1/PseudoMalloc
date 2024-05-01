@@ -127,6 +127,7 @@ int main(){
     my_free(my_pointer5, 1024);
     my_free(my_pointer6, 2048);
     my_free(my_pointer7, 4096);
+
     printf("All the memory allocated has now been freed\n");
 
     printf(DIVIDER);
