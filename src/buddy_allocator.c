@@ -67,7 +67,7 @@ void buddy_allocator_init(buddy_allocator_t *buddy_allocator, BitMap *bitmap, ch
   buddy_allocator->bitmap = bitmap;  //ptr bitmap (vd. bitmap.h)
   buddy_allocator->lvl = lvl;
 
-  /*//inizializzo la bitmap per inizializzare il buddy allocator
+  /*inizializzo la bitmap per inizializzare il buddy allocator
   int bits = (1 << lvl) - 1;  //calculate necessary bits to represent the tree (2^lvl - 1, -1 cuz tree starts from 0)
   BitMap_init(buddy_allocator->bitmap, bits, buffer_dim);  //initialize bitmap
 
@@ -97,8 +97,8 @@ int search_available_block(BitMap* bitmap, int lvl){  //search for a free block 
   // search till i find an available block
   int i = start_index;
   while (i <=  end_index){
-    printf("posizione: %d\n", i);
-    printf("bit del bitmap spento/acceso(0/1): %d\n", BitMap_bit(bitmap, i) );
+    //printf("pos: %d\n", i);
+    //printf("bit busy-free(0-1): %d\n", BitMap_bit(bitmap, i) );
     if (BitMap_bit(bitmap, i) != 0){
       printf("blocco libero trovato in pos = %d\n", i);
       return i;
@@ -229,4 +229,3 @@ void free_buddy_pointer(buddy_allocator_t* buddy_allocator, void* mem){
   check_index(buddy_allocator, index);  //check index
   free_buddy(buddy_allocator, index);  //free
 }
-

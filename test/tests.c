@@ -14,7 +14,6 @@
 #define MIN_SIZE (MAX_MEM_SIZE >>(BUDDY_LVLS - 1))     //It's like dividing the max size by 2^9, that is the number of levels. So >I obtain the minimum size
 #define N_BUDDIES ((1 << BUDDY_LVLS) - 1)   //2^9 - 1 = 511
 #define PAGE_SIZE 4096  //as it's the most common page size
-#define BITSET_SIZE (N_BUDDIES + 7) >> 3
 #define DIVIDER ("---------------------------------------------------------------------------------------------------------------\n")
 
 int main(){
@@ -28,9 +27,9 @@ int main(){
     //now i'm gonna test the my_malloc funciton with different sizes
     printf("TESTING my_malloc allocation with buddy allocator (dim > 1/4 of page_dim)\n");
 
-    printf("Test 1: size = 8 bytes\n");
-    char *my_pointer1 = (char *)my_malloc(8);   //8 bytes < 1/4 of the page size, so it should use buddy
-    size_t size = 8;
+    printf("Test 1: size = 4+4 bytes\n");
+    char *my_pointer1 = (char *)my_malloc(4);   //8 bytes < 1/4 of the page size, so it should use buddy
+    size_t size = 4;
     if (my_pointer1 == NULL){
         printf("Test 1 failed\n");
         return -1;

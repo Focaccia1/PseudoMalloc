@@ -12,14 +12,14 @@
 #include "../include/buddy_allocator.h"
 #include "../include/bit_map.h"
 
-char memory[MAX_MEM_SIZE];
-uint8_t buffer[((1 << (BUDDY_LVLS)) - 1)];
 
+char memory[MAX_MEM_SIZE];
+uint8_t buffer[BITSET_SIZE];
 buddy_allocator_t buddy_allocator;
 BitMap bitmap;
 
 void allocator_init(){
-    BitMap_init(&bitmap, N_BUDDIES, buffer);  //initialize the bitmap
+    BitMap_init(&bitmap,  buffer, N_BUDDIES);  //initialize the bitmap
     BitMap_setBit(&bitmap, 0, 1);  //set the first bit to 1 (free)
     buddy_allocator_init(&buddy_allocator, &bitmap, memory, BUDDY_LVLS, MIN_SIZE);   //the bitmap is initialized in buddy_allocator_init
 }
