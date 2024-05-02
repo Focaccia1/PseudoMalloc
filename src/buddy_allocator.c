@@ -181,10 +181,11 @@ void *buddy_allocator_pseudo_malloc(buddy_allocator_t *buddy_allocator, int dim)
   }
   else{
     /*//if i get here i found a block, i have to allocate it
-    int *address = (int *)get_buddy_allocator_address(buddy_allocator, level, index);  //get the address of the block
-    *address = index;  //now save the index of the block i've located so i can free it later
+    int *address = (int *)get_buddy_allocator_address(buddy_allocator, level, index);  //get the address of the block       //GIVES SEGMENTATION FAULT, IT SHOULD BE THE SAME AS THE CODE BELOW
+    *address = index;  //now save the index of the block i've located so i can free it later                                //I DON'T CARE AS THE CODE BELOW WORKS FINE
 
     return (void *)(address + 1);  //return the address of the block*/
+    //alternative code:
     int offset = offset_from_first(index);
     
     int starting_dim = buddy_allocator->min_block_size; //dimensione del blocco di memoria più piccolo
