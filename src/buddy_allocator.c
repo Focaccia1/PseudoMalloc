@@ -82,6 +82,23 @@ void buddy_allocator_init(buddy_allocator_t *buddy_allocator, BitMap *bitmap, ch
 }
 
 
+int search_available_level(buddy_allocator_t * buddy_allocator, int dim){ //check for the fittest available level
+  //printf("dim del search_available_lvl: %d\t", dim);
+  int lvl = buddy_allocator->lvl - 1; //start from the last level
+  int start_dim = buddy_allocator->min_block_size;
+  while(lvl >= 0){
+    printf("\t number of the lvl: %d, start dim: %d\t", lvl, start_dim);
+    if(dim <= start_dim){ //i check if the dim i need to allocate can actualy fit at this level
+      printf("lvl found: %d\n", lvl);
+      return lvl;   //if it fits I return this level
+    }
+    lvl--;    //if it doesn't fit, i go to the previous level
+    start_dim *= 2; //and I double the start dimension to confront it with the dim I need to allocate
+   
+  }
+  return lvl; //if dim it's always bigger than the start dim, probably I'm giving the root level
+}
+
 
 int search_available_block(BitMap* bitmap, int lvl){  //search for a free block at level "lvl"
   if (lvl < 0){
@@ -99,35 +116,18 @@ int search_available_block(BitMap* bitmap, int lvl){  //search for a free block 
   while (i <=  end_index){
     //printf("pos: %d\n", i);
     //printf("bit busy-free(0-1): %d\n", BitMap_bit(bitmap, i) );
-    if (BitMap_bit(bitmap, i) != 0){
+    if (BitMap_bit(bitmap, i) != 0){    //where 0 in busy and 1 is free
       printf("blocco libero trovato in pos = %d\n", i);
-      return i;
+      return i;   //i is the index of the free block
     }
     i++;
   }
   return -1;  //if no found, return -1
 }
 
-int search_available_level(buddy_allocator_t * buddy_allocator, int dim){ //check for the fittest available level
-  printf("dim del search_available_lvl: %d\t", dim);
-  int lvl = buddy_allocator->lvl - 1;
-  int start_dim = buddy_allocator->min_block_size;
-  while(lvl >= 0){
-    printf("\t dim of the lvl: %d, start dim: %d\t", lvl, start_dim);
-    if(dim <= start_dim){
-      printf("lvl found: %d\n", lvl);
-      return lvl;
-    }
-    lvl--;
-    start_dim *= 2;
-   
-  }
-  return lvl; //if dim it's always bigger than the start dim, the tree is probably empty so i give the root (when lvl == 0)
-}
-
 int get_available_buddy_index(buddy_allocator_t *buddy_allocator, int lvl){ //recursive function to find a free index
 
-  //base
+  //base case
   if (lvl < 0){
     return -1;  //if lvl invalid
   }
@@ -146,6 +146,8 @@ int get_available_buddy_index(buddy_allocator_t *buddy_allocator, int lvl){ //re
 
   printf("availability found at lvl: %d\n", lvl);
 
+  //i get here if i found a good index. I exit from recursive call and calculate and return the children
+
   int right_index = get_right_child(parent_index);  //calculate right child
   check_index(buddy_allocator, right_index);  //check if index is within limits [0, 2^(buddy->lvl)]
 
@@ -157,14 +159,16 @@ int get_available_buddy_index(buddy_allocator_t *buddy_allocator, int lvl){ //re
 
  }
 
-void *get_buddy_allocator_address(buddy_allocator_t* buddy_allocator, int lvl, int index){
+/*void *get_buddy_allocator_address(buddy_allocator_t* buddy_allocator, int lvl, int index){
   int level_index = index - ((1 << lvl) -1);  //from level to index
   int shift = level_index * (buddy_allocator->min_block_size * (1 << (buddy_allocator->lvl - lvl -1))); //dim of a block at a certain lvl + offset calculation (shift)
   return (void *)buddy_allocator->memory + shift;
-}
+}*/ //GIVES SEGMENTATION FAULT, it is surely wrong. I used an alternative code below (a bit spaghetti code, but it works)
+
 int offset_from_first(int index){
   return (int)(index - ( (1 << from_index_to_level(index)) - 1) ); 
 }
+
 void *buddy_allocator_pseudo_malloc(buddy_allocator_t *buddy_allocator, int dim){
 
   int level = search_available_level(buddy_allocator, dim + sizeof(int));  //search for the fittest available level, I sum sizeof(int) cause I have to add the header size (4 bytes)
@@ -189,22 +193,22 @@ void *buddy_allocator_pseudo_malloc(buddy_allocator_t *buddy_allocator, int dim)
     int offset = offset_from_first(index);
     
     int starting_dim = buddy_allocator->min_block_size; //dimensione del blocco di memoria più piccolo
-    int dim_blc = starting_dim * (1 << (buddy_allocator->lvl - level - 1) );//calcolo la dimensione del blocco in un dato livello, ad ogni livello si raddoppia
-    int a = dim_blc * offset;
+    int dim_block = starting_dim * (1 << (buddy_allocator->lvl - level - 1) );//calcolo la dimensione del blocco in un dato livello, ad ogni livello si raddoppia
+    int a = dim_block * offset;
     
-    int * header = (int *) (buddy_allocator->memory + a);
+    int * address = (int *) (buddy_allocator->memory + a);
     
-    *header = index; //salvo l'indice del blocco di memoria allocato, cosi con la free posso trovare il blocco di memoria da liberare
-    return (void *) (header + 1); 
+    *address = index; //salvo l'indice del blocco di memoria allocato, cosi con la free posso trovare il blocco di memoria da liberare
+    return (void *) (address + 1);    //ritorno l'indirizzo del blocco di memoria
   }
 }
 
 //now the two funcions that handle the free
 void free_buddy(buddy_allocator_t* buddy_allocator, int index){   //free blocks
   //check index
-  check_index(buddy_allocator, index);
+  check_index(buddy_allocator, index);  //check if index is within limits [0, 2^(buddy->lvl)]
 
-  BitMap_setBit(buddy_allocator->bitmap, index, 1);  //set the bit to 1
+  BitMap_setBit(buddy_allocator->bitmap, index, 1);  //set the bit to 1 -> free
 
   //now check if the brother is free as well, so you can merge and free the father too
   while(index != 0){
@@ -213,7 +217,7 @@ void free_buddy(buddy_allocator_t* buddy_allocator, int index){   //free blocks
     int left_child_idx = get_left_child(parent_idx);      /*left child index*/    check_index(buddy_allocator, left_child_idx);
     int right_child_idx = get_right_child(parent_idx);    /*right child index*/   check_index(buddy_allocator, right_child_idx);
 
-    //now check if I can merge, i have to check if both children are free. If so, merge them into parent
+    //now check if I can merge, i have to check if both children are free (1). If so, merge them into parent
     if(BitMap_bit(buddy_allocator->bitmap, left_child_idx) == 1 && BitMap_bit(buddy_allocator->bitmap, right_child_idx) == 1){  // 1-> free, 0-> busy
       BitMap_setBit(buddy_allocator->bitmap, parent_idx, 1);  //set the parent to 1
       BitMap_setBit(buddy_allocator->bitmap, left_child_idx, 0);  //set the left child to 0
