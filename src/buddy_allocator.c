@@ -155,6 +155,9 @@ int get_available_buddy_index(buddy_allocator_t *buddy_allocator, int lvl){ //re
   check_index(buddy_allocator, left_index);  //check if index is within limits [0, 2^(buddy->lvl)]
 
   BitMap_setBit(buddy_allocator->bitmap, right_index, 1);  //set right child to 1 (so set it as free)
+  int parent = get_parent(left_index);  //get parent of the index i have to allocate
+  BitMap_setBit(buddy_allocator->bitmap, parent, 0);  //I set the parent as occupied to avoid conflicts with higher levels, ("COLORO" RICORSIVAMENTE I LIVELLI SUPERIORI A QUELLO DOVE FACCIO LA PRESA, PER TRATTARE I VARI CASI) 
+  
   return left_index;  //return left child (first in the tree hierarchy)
 
  }

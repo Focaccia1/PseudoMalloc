@@ -15,6 +15,36 @@
 #define N_BUDDIES ((1 << BUDDY_LVLS) - 1)   //2^9 - 1 = 511
 #define PAGE_SIZE 4096  //as it's the most common page size
 #define DIVIDER ("---------------------------------------------------------------------------------------------------------------\n")
+/*
+// Stampa l'albero del buddy allocator
+void printBuddyAllocatorTree(buddy_allocator_t* node, int level) {
+    if (node == NULL) {
+        return;
+    }
+
+    // Stampa le informazioni del nodo corrente
+    printf("Level: %d, Min Block Size: %d, Bit: %d\n", node->lvl, node->min_block_size, BitMap_bit(node->bitmap, 0));
+
+    // Stampa l'albero sinistro
+    printBuddyAllocatorTree(node->memory, level + 1);
+
+    // Stampa l'albero destro
+    printBuddyAllocatorTree(node->memory + node->min_block_size, level + 1);
+}
+
+// Stampa l'albero del buddy allocator
+void printBuddyAllocator(buddy_allocator_t* root) {
+    if (root == NULL) {
+        printf("L'albero è vuoto.\n");
+        return;
+    }
+
+    printf("Radice:\n");
+    printBuddyAllocatorTree(root, 0);
+}
+*/
+
+
 
 int main(){
     printf("tests started\n");
@@ -22,6 +52,7 @@ int main(){
     int max_buddy_tests = 4;
     int max_mmap_tests = 3;
     allocator_init();
+    
     printf("Allocator it's been initialized\n");
 
     //now i'm gonna test the my_malloc funciton with different sizes
@@ -39,6 +70,10 @@ int main(){
     printf("Test 1 passed, %ld bytes have been allocated\n", size);
     L: buddy_tests ++;
 
+    my_free(my_pointer1, 8);
+
+
+
     printf(DIVIDER);
 
     printf("Test 2: size = 32+4bytes\n");
@@ -53,6 +88,8 @@ int main(){
     printf("Test 2 passed, %ld bytes have been allocated\n", size);
     L1: buddy_tests ++;
 
+    my_free(my_pointer2, 32);
+
     printf(DIVIDER);
 
     printf("Test 3: size = 256+4 bytes\n");
@@ -66,6 +103,7 @@ int main(){
     }
     printf("Test 3 passed, %ld bytes have been allocated\n", size);
     L2: buddy_tests ++;
+
 
     printf(DIVIDER);
 
@@ -84,8 +122,6 @@ int main(){
     printf(DIVIDER);
 
     printf("now i get to free the memory allocated\n");
-    my_free(my_pointer1, 8);
-    my_free(my_pointer2, 32);
     my_free(my_pointer3, 256);
     my_free(my_pointer4, 1020);
     printf("All the memory allocated has now been freed\n");
@@ -105,6 +141,7 @@ int main(){
     }
     printf("Test 1 passed, %ld bytes have been allocated\n", size);
     L4: mmap_tests ++;
+        my_free(my_pointer5, 1024);
 
     printf(DIVIDER);
 
@@ -120,11 +157,14 @@ int main(){
     printf("Test 2 passed, %ld bytes have been allocated\n", size);
     L5: mmap_tests ++;
 
+        my_free(my_pointer6, 2048);
+
+
     printf(DIVIDER);
 
     printf("Test 3: size = 4096+4 bytes\n");
-    char *my_pointer7 = (char *)my_malloc(4096);   //4096 bytes > 1/4 of the page size, so it should use mmap
-    size = 4096;
+    char *my_pointer7 = (char *)my_malloc(524284);   //4096 bytes > 1/4 of the page size, so it should use mmap
+    size = 524284;
     if (my_pointer7 == NULL){
         printf("Test 3 failed\n");
         //return -1;
@@ -134,15 +174,20 @@ int main(){
     printf("Test 3 passed, %ld bytes have been allocated\n", size);
     L6: mmap_tests ++;
 
+    int root = my_pointer7[0];
+    printf("CHECK ON THE ROOT TO SEE IF MY ASSIGNATION WORKS\n %d", root);
+    if (root == 0){
+        printf("MY EDIT WAS SUCCESFULL\n");
+
+    }
     printf(DIVIDER);
 
-    printf("now i get to free the memory allocated\n");
+ 
 
-    my_free(my_pointer5, 1024);
-    my_free(my_pointer6, 2048);
+   
     my_free(my_pointer7, 4096);
 
-    printf("All the memory allocated has now been freed\n");
+    printf("All the memory allocated has now been freed succesfully\n");
 
     printf(DIVIDER);
 
